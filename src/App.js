@@ -1,5 +1,6 @@
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom'
 import Users from './user/pages/Users'
+import Auth from './user/pages/Auth'
 import NewPlace from './places/pages/NewPlace'
 import UserPlaces from './places/pages/UserPlaces.jsx'
 import MainNavigation from './shared/components/Navigation/MainNavigation'
@@ -14,6 +15,7 @@ function App() {
         <Route path='/:userId/places' element={<UserPlaces />} />
         <Route path='/places/new' element={<NewPlace />} />
         <Route path='/places/:placeId' element={<UpdatePlace />} />
+        <Route path='/auth' element={<Auth />} />
         <Route path="*" element={<Navigate to="/"/>} />
       </Routes>
     </main>
