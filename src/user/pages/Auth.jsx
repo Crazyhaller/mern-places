@@ -2,6 +2,8 @@ import { useState, useContext } from 'react'
 import Card from '../../shared/components/UIElements/Card'
 import Input from '../../shared/components/FormElements/Input'
 import Button from '../../shared/components/FormElements/Button'
+import ErrorModal from '../../shared/components/UIElements/ErrorModal'
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -15,6 +17,8 @@ function Auth() {
   const auth = useContext(AuthContext)
 
   const [isLoginMode, setIsLoginMode] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState()
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -59,6 +63,7 @@ function Auth() {
     if (isLoginMode) {
     } else {
       try {
+        setIsLoading(true)
         const response = await fetch('http://localhost:5000/api/users/signup', {
           method: 'POST',
           headers: {
@@ -72,57 +77,66 @@ function Auth() {
         })
 
         const responseData = await response.json()
+        if (!response.ok) {
+          throw new Error(responseData.message)
+        }
         console.log(responseData)
+        setIsLoading(false)
+        auth.login()
       } catch (err) {
-        console.log(err)
+        setIsLoading(false)
+        setError(err.message || 'Something went wrong, please try again')
       }
     }
-
-    auth.login()
+    setIsLoading(false)
   }
 
   return (
-    <Card className="authentication">
-      <h2>Login Required</h2>
-      <hr />
-      <form onSubmit={authSubmitHandler}>
-        {!isLoginMode && (
+    <>
+      <ErrorModal error={error} onClear={() => setError(null)} />
+      <Card className="authentication">
+        {isLoading && <LoadingSpinner asOverlay />}
+        <h2>Login Required</h2>
+        <hr />
+        <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <Input
+              element="input"
+              id="name"
+              type="text"
+              label="Your name"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a name"
+              onInput={inputHandler}
+            />
+          )}
           <Input
             element="input"
-            id="name"
-            type="text"
-            label="Your name"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a name"
+            id="email"
+            type="email"
+            label="Email"
+            validators={[VALIDATOR_EMAIL()]}
+            errorText="Please enter a valid Email"
             onInput={inputHandler}
           />
-        )}
-        <Input
-          element="input"
-          id="email"
-          type="email"
-          label="Email"
-          validators={[VALIDATOR_EMAIL()]}
-          errorText="Please enter a valid Email"
-          onInput={inputHandler}
-        />
-        <Input
-          element="input"
-          id="password"
-          type="password"
-          label="Password"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="Please enter a valid password, at least 5 characters long"
-          onInput={inputHandler}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? 'Login' : 'Signup'}
+          <Input
+            element="input"
+            id="password"
+            type="password"
+            label="Password"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid password, at least 5 characters long"
+            onInput={inputHandler}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            {isLoginMode ? 'Login' : 'Signup'}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          Switch to {isLoginMode ? 'Signup' : 'Login'}
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        Switch to {isLoginMode ? 'Signup' : 'Login'}
-      </Button>
-    </Card>
+      </Card>
+    </>
   )
 }
 
