@@ -10,7 +10,7 @@ import {
   VALIDATOR_REQUIRE,
 } from '../../shared/Util/validators'
 import { useForm } from '../../shared/hooks/form-hook'
-import { useHttpClient } from '../../shared/hooks/https-hook'
+import { useHttpClient } from '../../shared/hooks/http-hook'
 import { AuthContext } from '../../shared/context/auth-context'
 import './Auth.css'
 
@@ -61,7 +61,7 @@ function Auth() {
 
     if (isLoginMode) {
       try {
-        await sendRequest(
+        const responseData = await sendRequest(
           'http://localhost:5000/api/users/login',
           'POST',
           JSON.stringify({
@@ -72,13 +72,13 @@ function Auth() {
             'Content-Type': 'application/json',
           }
         )
-        auth.login()
+        auth.login(responseData.user.id)
       } catch (err) {
         console.log(err)
       }
     } else {
       try {
-        await sendRequest(
+        const responseData = await sendRequest(
           'http://localhost:5000/api/users/signup',
           'POST',
           JSON.stringify({
@@ -90,7 +90,7 @@ function Auth() {
             'Content-Type': 'application/json',
           }
         )
-        auth.login()
+        auth.login(responseData.user.id)
       } catch (err) {
         console.log(err)
       }
