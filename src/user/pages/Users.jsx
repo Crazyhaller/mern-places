@@ -4,7 +4,7 @@ import ErrorModal from '../../shared/components/UIElements/ErrorModal'
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import { useHttpClient } from '../../shared/hooks/http-hook'
 
-function Users() {
+const Users = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient()
   const [loadedUsers, setLoadedUsers] = useState()
 
@@ -16,9 +16,7 @@ function Users() {
         )
 
         setLoadedUsers(responseData.users)
-      } catch (err) {
-        console.log(err)
-      }
+      } catch (err) {}
     }
     fetchUsers()
   }, [sendRequest])

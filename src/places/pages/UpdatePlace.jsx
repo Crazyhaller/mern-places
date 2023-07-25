@@ -14,11 +14,13 @@ import { useHttpClient } from '../../shared/hooks/http-hook'
 import { AuthContext } from '../../shared/context/auth-context'
 import './PlaceForm.css'
 
-function UpdatePlace() {
+const UpdatePlace = () => {
   const auth = useContext(AuthContext)
   const { isLoading, error, sendRequest, clearError } = useHttpClient()
   const [loadedPlace, setLoadedPlace] = useState()
   const placeId = useParams().placeId
+  const navigate = useNavigate()
+
   const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
@@ -58,11 +60,8 @@ function UpdatePlace() {
     fetchPlace()
   }, [sendRequest, placeId, setFormData])
 
-  const navigate = useNavigate()
-
   const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault()
-
     try {
       await sendRequest(
         `http://localhost:5000/api/places/${placeId}`,
@@ -73,13 +72,14 @@ function UpdatePlace() {
         }),
         {
           'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token,
         }
       )
       navigate('/' + auth.userId + '/places')
     } catch (err) {}
   }
 
-  if (isLoading && !error) {
+  if (isLoading) {
     return (
       <div className="center">
         <LoadingSpinner />
@@ -87,11 +87,11 @@ function UpdatePlace() {
     )
   }
 
-  if (!loadedPlace) {
+  if (!loadedPlace && !error) {
     return (
       <div className="center">
         <Card>
-          <h2>Could not find a place</h2>
+          <h2>Could not find place!</h2>
         </Card>
       </div>
     )
@@ -108,23 +108,23 @@ function UpdatePlace() {
             type="text"
             label="Title"
             validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid title"
+            errorText="Please enter a valid title."
             onInput={inputHandler}
             initialValue={loadedPlace.title}
-            initalValid={true}
+            initialValid={true}
           />
           <Input
             id="description"
             element="textarea"
             label="Description"
             validators={[VALIDATOR_MINLENGTH(5)]}
-            errorText="Please enter a valid description(min 5 characters)"
+            errorText="Please enter a valid description (min. 5 characters)."
             onInput={inputHandler}
-            initalValue={loadedPlace.description}
+            initialValue={loadedPlace.description}
             initialValid={true}
           />
           <Button type="submit" disabled={!formState.isValid}>
-            Update Place
+            UPDATE PLACE
           </Button>
         </form>
       )}

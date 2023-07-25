@@ -36,7 +36,9 @@ function PlaceItem(props) {
     try {
       await sendRequest(
         `http://localhost:5000/api/places/${props.id}`,
-        'DELETE'
+        'DELETE',
+        null,
+        { Authorization: 'Bearer ' + auth.token }
       )
       props.onDelete(props.id)
     } catch (err) {}
@@ -49,7 +51,7 @@ function PlaceItem(props) {
         show={showMap}
         onCancel={closeMapHandler}
         header={props.address}
-        contenClass="place-item__modal-content"
+        contentClass="place-item__modal-content"
         footerClass="place-item__modal-actions"
         footer={<Button onClick={closeMapHandler}>Close</Button>}
       >
@@ -82,7 +84,10 @@ function PlaceItem(props) {
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={props.image} alt={props.title} />
+            <img
+              src={`http://localhost:5000/${props.image}`}
+              alt={props.title}
+            />
           </div>
           <div className="place-item__info">
             <h2>{props.title}</h2>
@@ -91,14 +96,15 @@ function PlaceItem(props) {
           </div>
           <div className="place-item__actions">
             <Button inverse onClick={openMapHandler}>
-              View On Map
+              VIEW ON MAP
             </Button>
             {auth.userId === props.creatorId && (
-              <Button to={`/places/${props.id}`}>Edit</Button>
+              <Button to={`/places/${props.id}`}>EDIT</Button>
             )}
+
             {auth.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
-                Delete
+                DELETE
               </Button>
             )}
           </div>

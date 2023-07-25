@@ -3,6 +3,7 @@ import Input from '../../shared/components/FormElements/Input'
 import Button from '../../shared/components/FormElements/Button'
 import ErrorModal from '../../shared/components/UIElements/ErrorModal'
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
+import ImageUpload from '../../shared/components/FormElements/ImageUpload'
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
@@ -65,7 +66,7 @@ function NewPlace() {
           type="text"
           label="Title"
           validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid title"
+          errorText="Please enter a valid title."
           onInput={inputHandler}
         />
         <Input
@@ -73,7 +74,7 @@ function NewPlace() {
           element="textarea"
           label="Description"
           validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="Please enter a valid description (at least 5 characters long)"
+          errorText="Please enter a valid description (at least 5 characters)."
           onInput={inputHandler}
         />
         <Input
@@ -81,11 +82,16 @@ function NewPlace() {
           element="input"
           label="Address"
           validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid address"
+          errorText="Please enter a valid address."
           onInput={inputHandler}
         />
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image."
+        />
         <Button type="submit" disabled={!formState.isValid}>
-          Add New Place
+          ADD PLACE
         </Button>
       </form>
     </>
