@@ -91,7 +91,7 @@ const UpdatePlace = () => {
     return (
       <div className="center">
         <Card>
-          <h2>Could not find place!</h2>
+          <h2>Could Not Find A Place!</h2>
         </Card>
       </div>
     )
@@ -124,7 +124,7 @@ const UpdatePlace = () => {
             initialValid={true}
           />
           <Button type="submit" disabled={!formState.isValid}>
-            UPDATE PLACE
+            Update Place
           </Button>
         </form>
       )}
